@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Week_3.Services;
+﻿using Week_3.Repositories;
 
-namespace Week_3.Repositories
+namespace Week_3.Services
 {
-    public class UserRepository : IUserRepository<User> 
+    public class UserService : IUserRepository<User>
     {
         private readonly DataContext _dataContext;
-        public UserRepository(DataContext dataContext)
+        public UserService(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
@@ -34,7 +33,7 @@ namespace Week_3.Repositories
         public async Task Update(User UpdateUser)
         {
             var user = await _dataContext.users.FindAsync(UpdateUser.Id);
-            if(user != null)
+            if (user != null)
             {
                 user.Name = UpdateUser.Name;
                 user.Surname = UpdateUser.Surname;

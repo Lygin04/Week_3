@@ -17,7 +17,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 });
 
 
-builder.Services.AddScoped<IUserRepository<User>, UserRepository>();
+builder.Services.AddScoped<IUserRepository<User>, UserService>();
 
 builder.Services.AddControllers();
 builder.Services.AddMvc();
