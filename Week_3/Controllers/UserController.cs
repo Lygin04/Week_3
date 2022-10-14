@@ -9,45 +9,44 @@ namespace Week_3.Controllers
     public class UserController : ControllerBase
     {
 
-        IUserRepository<User> _db;
+        private readonly IUserRepository<User> _db;
 
-        public UserController(UserRepository userRepository)
+        public UserController(IUserRepository<User> userRepository)
         {
             _db = userRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<List<User>> Get()
         {
-            return Ok(_db.GetAll());
+
+            return await _db.GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<User> Get(int id)
         {
             var user = _db.GetUser(id);
-            if (user == null)
-                return BadRequest("Пользователь не найден");
-            return Ok(user);
+            return await user;
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task Create(User user)
         {
-            return Ok(_db.Create(user));
+            await _db.Create(user);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(User user)
+        public async Task Update(User user)
         {
-            return Ok(_db.Update(user));
+            await _db.Update(user);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task Delete(int id)
         {
-            return Ok(_db.Delete(id));
+            await _db.Delete(id);
         }
     }
 }

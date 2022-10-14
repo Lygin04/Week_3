@@ -34,11 +34,13 @@ namespace Week_3.Repositories
         public async Task Update(User UpdateUser)
         {
             var user = await _dataContext.users.FindAsync(UpdateUser.Id);
-
-            user.Name = UpdateUser.Name;
-            user.Surname = UpdateUser.Surname;
-            user.Age = UpdateUser.Age;
-            user.Email = UpdateUser.Email;
+            if(user != null)
+            {
+                user.Name = UpdateUser.Name;
+                user.Surname = UpdateUser.Surname;
+                user.Age = UpdateUser.Age;
+                user.Email = UpdateUser.Email;
+            }
             await _dataContext.SaveChangesAsync();
         }
 
@@ -46,27 +48,9 @@ namespace Week_3.Repositories
         {
             var user = await _dataContext.users.FindAsync(id);
 
-            _dataContext.users.Remove(user);
-        }
-
-        private bool disposed = false;
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _dataContext.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (user != null)
+                _dataContext.users.Remove(user);
+            await _dataContext.SaveChangesAsync();
         }
     }
 }
