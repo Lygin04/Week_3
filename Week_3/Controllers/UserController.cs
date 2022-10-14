@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Week_3.Repositories;
 
 namespace Week_3.Controllers
 {
@@ -7,23 +8,24 @@ namespace Week_3.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly DataContext _dataContext;
 
-        public UserController(DataContext dataContext)
+        IUserRepository<User> _db;
+
+        public UserController(UserRepository userRepository)
         {
-            _dataContext = dataContext;
+            _db = userRepository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(await _dataContext.users.ToListAsync());
+            return Ok(_db.GetAll());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var user = await _dataContext.users.FindAsync(id);
+            var user = _db.GetUser(id);
             if (user == null)
                 return BadRequest("Пользователь не найден");
             return Ok(user);
@@ -31,42 +33,21 @@ namespace Week_3.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<List<User>>> Create(User user)
+        public async Task<IActionResult> Create(User user)
         {
-           _dataContext.users.Add(user);
-            await _dataContext.SaveChangesAsync();
-            return Ok(await _dataContext.users.ToListAsync());
+            return Ok(_db.Create(user));
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<User>>> Update(User UpdateUser)
+        public async Task<IActionResult> Update(User user)
         {
-            var user = await _dataContext.users.FindAsync(UpdateUser.Id);
-            if (user == null)
-                return BadRequest("Пользователь не найден");
-
-            user.Name = UpdateUser.Name;
-            user.Surname = UpdateUser.Surname;
-            user.Age = UpdateUser.Age;
-            user.Email = UpdateUser.Email;
-
-            await _dataContext.SaveChangesAsync();
-
-            return Ok(await _dataContext.users.ToListAsync());
+            return Ok(_db.Update(user));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<User>>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var user = await _dataContext.users.FindAsync(id);
-            if (user == null)
-                return BadRequest("Пользователь не найден");
-
-            _dataContext.users.Remove(user);
-            await _dataContext.SaveChangesAsync();
-
-            return Ok(await _dataContext.users.ToListAsync());
+            return Ok(_db.Delete(id));
         }
-
     }
 }
